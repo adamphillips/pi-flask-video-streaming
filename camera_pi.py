@@ -2,10 +2,8 @@ import time
 import io
 import threading
 import picamera
-import picamera.array
-import cv2
+from image_processor import ImageProcessor as ip
 import pdb
-import numpy as np
 
 class Camera(object):
     thread = None  # background thread that reads frames from camera
@@ -47,13 +45,9 @@ class Camera(object):
                                                  use_video_port=True):
                 # store frame
                 stream.seek(0)
-
-                data = cv2.imdecode(np.fromstring(stream.getvalue(), dtype=np.uint8), 1)
-                #draw a test rectangle
-                cv2.rectangle(data, (10, 400), (300, 300), (0, 255, 0), 2)
-                frame = cv2.imencode('.jpg', data)[1].tostring()
-
-                cls.frame = frame
+                # pdb.set_trace()
+                processor = ip()
+                cls.frame = processor.process(stream)
 
                 # reset stream for next frame
                 stream.seek(0)
