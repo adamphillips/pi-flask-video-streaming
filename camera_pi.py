@@ -2,7 +2,7 @@ import time
 import io
 import threading
 import picamera
-from histogram_image_processor import ImageProcessor as ip
+from edge_image_processor import ImageProcessor as ip
 import pdb
 
 class Camera(object):
