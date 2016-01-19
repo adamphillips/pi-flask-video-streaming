@@ -2,7 +2,7 @@ import time
 import io
 import threading
 import picamera
-from edge_image_processor import ImageProcessor as ip
+from face_image_processor import ImageProcessor as ip
 import pdb
 
 class Camera(object):
@@ -29,10 +29,10 @@ class Camera(object):
     def _thread(cls):
         with picamera.PiCamera() as camera:
             # camera setup
-            camera.resolution = (640, 480)
+            camera.resolution = (480, 320)
             camera.hflip = True
             camera.vflip = True
-            camera.framerate = 12
+            camera.framerate = 5
             camera.brightness = 80
             camera.contrast = 30
 
