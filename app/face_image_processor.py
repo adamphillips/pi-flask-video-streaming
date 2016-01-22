@@ -2,7 +2,7 @@ import cv2
 import pdb
 import numpy as np
 from face_detector import FaceDetector
-from gopigo import gopigo
+from null_gopigo import gopigo
 
 class ImageProcessor:
   def __init__(self):
