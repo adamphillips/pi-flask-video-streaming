@@ -22,18 +22,6 @@ class ImageProcessor(object):
     cv2.rectangle(data, (10, 400), (300, 300), (0, 255, 0), 1)
     # draw a test square
     data[10:20, 10:20] = (255, 0, 0)
-    (B, G, R) = cv2.split(data)
-
-    zeros = np.zeros(data.shape[:2], dtype = "uint8")
-    Brz = self.prepare_channel(B, zeros, zeros, new_dims)
-    Grz = self.prepare_channel(zeros, G, zeros, new_dims)
-    Rrz = self.prepare_channel(zeros, zeros, R, new_dims)
-    Orz = self.prepare_channel(B, G, R, new_dims)
-
-    row1 = np.concatenate((Orz, Rrz), axis = 1)
-    row2 = np.concatenate((Brz, Grz), axis = 1)
-
-    data = np.concatenate((row1, row2), axis = 0)
 
     return cv2.imencode('.jpg', data)[1].tostring()
 
