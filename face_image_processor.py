@@ -14,10 +14,10 @@ class ImageProcessor:
     image = cv2.imdecode(np.fromstring(stream.getvalue(), dtype=np.uint8), 1)
 
     (height, width) = image.shape[:2]
-    quadrant_width = width / 4
+    segment_width = width / 3
 
-    cv2.line(image, (quadrant_width, 0), (quadrant_width, height), (255, 0, 0), 1)
-    cv2.line(image, (3 * quadrant_width, 0), (3 * quadrant_width, height), (255, 0, 0), 1)
+    cv2.line(image, (segment_width, 0), (segment_width, height), (255, 0, 0), 1)
+    cv2.line(image, (2 * segment_width, 0), (2 * segment_width, height), (255, 0, 0), 1)
 
     fd = FaceDetector('/home/pi/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
 
@@ -30,7 +30,7 @@ class ImageProcessor:
 
     if (len(faceRects) > 0):
       (x, y, w, h) = faceRects[0]
-      self.move(x + (w/2), quadrant_width)
+      self.move(x + (w/2), segment_width)
     else:
       print("no faces found")
       gopigo.stop()
@@ -38,16 +38,16 @@ class ImageProcessor:
 
     return cv2.imencode('.jpg', image)[1].tostring()
 
-  def move(self, horiz_x, quadrant_width):
-    mid_point = quadrant_width * 2
+  def move(self, horiz_x, segment_width):
+    mid_point = segment_width * 1.5
     offset = horiz_x - mid_point
     print(offset)
-    if(offset > quadrant_width):
+    if(offset > segment_width):
       print("right")
       gopigo.set_speed(10)
       gopigo.right_rot()
       #sleep(0.1)
-    elif(offset < - quadrant_width):
+    elif(offset < - segment_width):
       gopigo.set_speed(10)
       print("left")
       gopigo.left_rot()
