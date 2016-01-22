@@ -7,3 +7,11 @@ https://github.com/miguelgrinberg/flask-video-streaming
 
 with some additional tweaking provided by
 http://www.chioka.in/python-live-video-streaming-example/
+
+## Tests
+
+Tests use [pytest](http://pytest.org/). Run them with
+
+```
+py.test
+```
