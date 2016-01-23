@@ -33,9 +33,6 @@ class ImageProcessor:
 
     segment_width = self.segment_width
 
-    cv2.line(image, (segment_width, 0), (segment_width, self.height), (255, 0, 0), 1)
-    cv2.line(image, (2 * segment_width, 0), (2 * segment_width, self.height), (255, 0, 0), 1)
-
     faceRects = self.faces(image)
     for (x, y, w, h) in faceRects:
       cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -48,6 +45,9 @@ class ImageProcessor:
       gopigo.stop()
 
     print(time.time() - start_time)
+
+    cv2.line(image, (segment_width, 0), (segment_width, self.height), (255, 0, 0), 1)
+    cv2.line(image, (2 * segment_width, 0), (2 * segment_width, self.height), (255, 0, 0), 1)
 
     return cv2.imencode('.jpg', image)[1].tostring()
 
