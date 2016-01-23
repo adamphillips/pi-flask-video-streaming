@@ -29,10 +29,10 @@ class Camera(object):
     def _thread(cls):
         with picamera.PiCamera() as camera:
             # camera setup
-            camera.resolution = (320, 240)
+            camera.resolution = (160, 120)
             camera.hflip = True
             camera.vflip = True
-            camera.framerate = 30
+            camera.framerate = 20
             camera.brightness = 80
             camera.contrast = 30
 
