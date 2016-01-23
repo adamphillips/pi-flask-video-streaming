@@ -3,13 +3,20 @@ import pdb
 import numpy as np
 from face_detector import FaceDetector
 from null_gopigo import gopigo
+import time
 
 class ImageProcessor:
   def __init__(self):
     gopigo.set_speed(50)
     gopigo.stop
+    self._face_detector = FaceDetector('/home/pi/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
+
+  def faces(self, image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return self._face_detector.detect(gray, scaleFactor = 1.1, minNeighbors = 5, minSize = (30, 30))
 
   def process(self, stream):
+    start_time = time.time()
     image = cv2.imdecode(np.fromstring(stream.getvalue(), dtype=np.uint8), 1)
 
     (height, width) = image.shape[:2]
@@ -18,11 +25,7 @@ class ImageProcessor:
     cv2.line(image, (segment_width, 0), (segment_width, height), (255, 0, 0), 1)
     cv2.line(image, (2 * segment_width, 0), (2 * segment_width, height), (255, 0, 0), 1)
 
-    fd = FaceDetector('/home/pi/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
-
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    faceRects = fd.detect(gray, scaleFactor = 1.1, minNeighbors = 5, minSize = (30, 30))
+    faceRects = self.faces(image)
     for (x, y, w, h) in faceRects:
       cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
@@ -32,6 +35,8 @@ class ImageProcessor:
     else:
       print("no faces found")
       gopigo.stop()
+
+    print(time.time() - start_time)
 
     return cv2.imencode('.jpg', image)[1].tostring()
 
