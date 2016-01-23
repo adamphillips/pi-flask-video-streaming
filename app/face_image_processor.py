@@ -2,6 +2,7 @@ import cv2
 import pdb
 import numpy as np
 from face_detector import FaceDetector
+from segment_detector import SegmentDetector
 from null_gopigo import gopigo
 import time
 
@@ -13,7 +14,7 @@ class ImageProcessor:
     self.sizes_calculated = False
     self.image_height = None
     self.image_width = None
-    self.segment_width = None
+    self.segment_detector = None
 
   def faces(self, image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -21,7 +22,7 @@ class ImageProcessor:
 
   def calculate_sizes(self, image):
     (self.height, self.width) = image.shape[:2]
-    self.segment_width = self.width / 3
+    self.segment_detector = SegmentDetector(self.width)
     self.sizes_calculated = True
 
   def process(self, stream):
@@ -31,37 +32,35 @@ class ImageProcessor:
     if(self.sizes_calculated == False):
       self.calculate_sizes(image)
 
-    segment_width = self.segment_width
-
     faceRects = self.faces(image)
     for (x, y, w, h) in faceRects:
       cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     if (len(faceRects) > 0):
       (x, y, w, h) = faceRects[0]
-      self.move(x + (w/2), segment_width)
+      self.move(x + (w/2))
     else:
       print("no faces found")
       gopigo.stop()
 
     print(time.time() - start_time)
+    #pdb.set_trace()
 
-    cv2.line(image, (segment_width, 0), (segment_width, self.height), (255, 0, 0), 1)
-    cv2.line(image, (2 * segment_width, 0), (2 * segment_width, self.height), (255, 0, 0), 1)
+    cv2.line(image, (self.segment_detector.left_cutoff, 0), (self.segment_detector.left_cutoff, self.height), (255, 0, 0), 1)
+    cv2.line(image, (self.segment_detector.right_cutoff, 0), (self.segment_detector.right_cutoff, self.height), (255, 0, 0), 1)
 
     return cv2.imencode('.jpg', image)[1].tostring()
 
-  def move(self, horiz_x, segment_width):
-    mid_point = segment_width * 1.5
-    offset = horiz_x - mid_point
-    print(offset)
-    if(offset > segment_width):
+  def move(self, horiz_x):
+    segment = self.segment_detector.segment(horiz_x)
+    print(segment)
+    if(segment == 'left'):
       gopigo.set_speed(10)
       gopigo.right_rot()
-    elif(offset < - segment_width):
+    elif(segment == 'right'):
       gopigo.set_speed(10)
       gopigo.left_rot()
-    else:
+    elif(segment == 'centre'):
       gopigo.set_speed(50)
       gopigo.fwd()
 

@@ -6,9 +6,10 @@ class SegmentDetector():
     self.right_cutoff = self.image_width - self.segment_width
 
   def segment(self, position):
-    if position < self.left_cutoff:
+    if(position < self.left_cutoff):
       return 'left'
-    elif position > self.right_cutoff:
+    elif(position > self.right_cutoff):
       return 'right'
     else:
       return 'centre'
+
